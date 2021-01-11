@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Classe;
 use App\Http\Requests\AddClass;
 use App\Http\Requests\UpdateClass;
-use App\Http\Requests\UpdateStudent;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClassesController extends Controller
 {
@@ -69,9 +68,22 @@ class ClassesController extends Controller
         if (!$class) {
             $response['message'] = 'Class does not exist';
             return $response;
+        } else {
+            // Check if the given section contains students
+            $sections = DB::table('sections')
+                ->select('sections.id')
+                ->where('sections.class_id', $id)
+                ->get();
+            $sectionsArr = json_decode(json_encode($sections), true);
+            if (!$sectionsArr) {
+                $class->delete();
+                $response['message'] = 'Class deleted successfully';
+                return $response;
+            } else {
+                $response['message'] = 'Can not delete a class that contains section(s)';
+                return $response;
+            }
         }
-        $class->delete();
-        $response['message'] = 'Class deleted successfully';
-        return $response;
+
     }
 }

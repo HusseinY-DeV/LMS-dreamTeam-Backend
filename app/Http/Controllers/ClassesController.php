@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use App\Classe;
 use App\Http\Requests\AddClass;
 use App\Http\Requests\UpdateClass;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ClassesController extends Controller
 {
-    public function many()
+    public function many(Request $request)
     {
+        if ($request->query('_ALL') == 1) {
+            $classes = Classe::all();
+            return $classes;
+        }
         $classes = Classe::paginate(10);
         return $classes;
     }
@@ -46,15 +51,12 @@ class ClassesController extends Controller
 
     public function update(UpdateClass $request, $id)
     {
-        $request->validated();
-
         // Check if class exists
         $class = Classe::find($id);
         if (!$class) {
             $response['message'] = 'Class does not exist';
             return $response;
         }
-
         $class->name = $request->name;
         $class->save();
         $response['message'] = 'Class updated successfully';

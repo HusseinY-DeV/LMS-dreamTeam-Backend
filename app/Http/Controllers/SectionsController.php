@@ -14,9 +14,10 @@ class SectionsController extends Controller
     public function many(Request $request)
     {
         if ($request->query('_ALL') == 1) {
-            return Section::all();
+            return Section::with(['class', 'class'])->get();
+
         }
-        $sections = Section::paginate(10);
+        $sections = Section::with(['class', 'class'])->paginate(10);
         return $sections;
     }
 

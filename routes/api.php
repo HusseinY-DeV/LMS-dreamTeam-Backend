@@ -179,4 +179,25 @@ Route::prefix('sections')->group(function () {
      * */
     Route::delete('{id}', 'SectionsController@delete');
 });
+
+// Reports routes
+Route::prefix('reports')->group(function () {
+    /** 
+     * /api/reports/section
+     * Get the report of all sections
+     * */
+    Route::get('sections', 'ReportsController@allSections');
+
+    /** 
+     * /api/reports/section/id
+     * Get the report of one section
+     * */
+    Route::get('sections/{id}', 'ReportsController@oneSection');
+
+    /** 
+     * /api/reports/students/id
+     * Get the report of one student
+     * */
+    Route::get('students/{id}', 'ReportsController@oneStudent');
+});
 // });

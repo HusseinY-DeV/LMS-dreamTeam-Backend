@@ -10,4 +10,9 @@ class Student extends Model
     {
         return $this->belongsTo('App\Section');
     }
+
+    public function attendances()
+    {
+        return $this->belongsToMany('App\Attendance', 'attendance_student', 'student_id', 'attendance_id');
+    }
 }

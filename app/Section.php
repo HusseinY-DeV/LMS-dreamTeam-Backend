@@ -16,7 +16,7 @@ class Section extends Model
         return $this->belongsTo('\App\Classe');
     }
 
-    public function attendaces()
+    public function attendances()
     {
         return $this->hasMany('App\Attendance');
     }

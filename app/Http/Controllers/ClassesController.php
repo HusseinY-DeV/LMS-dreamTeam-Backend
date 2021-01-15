@@ -10,11 +10,19 @@ use Illuminate\Support\Facades\DB;
 
 class ClassesController extends Controller
 {
+
     public function many(Request $request)
     {
         if ($request->query('_ALL') == 1) {
             $classes = Classe::all();
             return $classes;
+        }
+        if ($request->query('classname')) {
+            $classes = DB::Table('classes')
+                ->select('*')
+                ->where('classes.name', 'LIKE', '%' . $request->query('classname') . '%')
+                ->get();
+            return response($classes);
         }
         $classes = Classe::paginate(10);
         return $classes;

@@ -8,15 +8,19 @@ use App\Section;
 use App\Student;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Storage;
 
 class StudentsController extends Controller
 {
-    public function many()
+    public function many(Request $request)
     {
+        if ($request->query('student')) {
+            $students = Student::with(['section', 'section.class'])
+                ->where('first_name', 'LIKE', '%' . $request->query('student') . '%')
+                ->paginate(10);
+            return $students;
+        }
         $students = Student::with(['section', 'section.class'])->paginate(10);
-
         return $students;
     }
 
@@ -34,7 +38,6 @@ class StudentsController extends Controller
     {
         // Validate the incoming data
         $request->validated();
-
 
         // Check if the section exists
         $section = Section::find($request->section_id);

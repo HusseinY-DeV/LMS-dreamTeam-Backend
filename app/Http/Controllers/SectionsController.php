@@ -15,7 +15,12 @@ class SectionsController extends Controller
     {
         if ($request->query('_ALL') == 1) {
             return Section::with(['class', 'class'])->get();
-
+        }
+        if ($request->query('sectionname')) {
+            $sections = Section::with(['class', 'class'])
+                ->where('sections.name', 'LIKE', '%' . $request->query('sectionname') . '%')
+                ->get();
+            return response($sections);
         }
         $sections = Section::with(['class', 'class'])->paginate(10);
         return $sections;

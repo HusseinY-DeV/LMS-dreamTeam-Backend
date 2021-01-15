@@ -6,11 +6,19 @@ use App\Http\Requests\AddAdmin;
 use App\Http\Requests\UpdateAdmin;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
-    public function many()
+    public function many(Request $request)
     {
+        if ($request->query('adminname')) {
+            $admins = DB::table('users')
+                ->select('*')
+                ->where('users.name', 'LIKE', '%' . $request->query('adminname') . '%')
+                ->get();
+            return response($admins);
+        }
         $admins = User::paginate(10);
         return $admins;
     }
@@ -32,13 +40,13 @@ class AuthController extends Controller
 
         $user = User::create([
             'name' => $request->name,
-            'email'    => $request->email,
+            'email' => $request->email,
             'password' => $request->password,
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Admin Added Successfully'
+            'message' => 'Admin Added Successfully',
         ]);
     }
 
@@ -61,7 +69,7 @@ class AuthController extends Controller
         $user->save();
         return response()->json([
             'success' => true,
-            'message' => 'Admin Updated Successfully'
+            'message' => 'Admin Updated Successfully',
         ]);
     }
 
@@ -87,8 +95,8 @@ class AuthController extends Controller
     {
         return response()->json([
             'access_token' => $token,
-            'token_type'   => 'bearer',
-            'expires_in'   => auth()->factory()->getTTL() * 60
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60,
         ]);
     }
 

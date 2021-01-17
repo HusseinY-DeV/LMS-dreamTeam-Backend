@@ -11,8 +11,13 @@ class Section extends Model
         return $this->hasMany('App\Student', 'section_id', 'id');
     }
 
-    public function class()
+    function class ()
     {
-        return $this->belongsTo('\App\Classe');
+        return $this->belongsTo('App\Classe');
+    }
+
+    public function attendance()
+    {
+        return $this->hasMany('App\Attendance');
     }
 }

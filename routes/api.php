@@ -178,3 +178,40 @@ Route::prefix('sections')->group(function () {
     Route::delete('{id}', 'SectionsController@delete');
 });
 // });
+
+// Sections API Routes
+Route::prefix('attendance')->group(function () {
+    /**
+     * /api/sections/
+     * Get all sections
+     * */
+    Route::get('', 'AttendanceController@many');
+    Route::get('/m', 'AttendanceController@manyA');
+    /**
+     * /api/sections/id
+     * Get a section with the specified id
+     * */
+    Route::get('{id}', 'SectionsController@one');
+
+    /**
+     * /api/sections/
+     * Add a section
+     * Values in the body
+     * */
+    Route::post('', 'AttendanceController@add');
+    Route::post('/{id}', 'AttendanceController@addAttendance');
+
+    /**
+     * /api/sections/id
+     * Update a section with the specified id
+     * Values in the body
+     * */
+    Route::patch('{id}', 'SectionsController@update');
+
+    /**
+     * /api/sections/id
+     * Delete a section with the specified id
+     * */
+    Route::delete('{id}', 'SectionsController@delete');
+});
+// });

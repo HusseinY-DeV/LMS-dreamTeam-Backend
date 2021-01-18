@@ -13,6 +13,6 @@ class Student extends Model
 
     public function attendance()
     {
-        return $this->belongsToMany('App\Attendance', 'student_attendance', 'student_id', 'attendance_id')->withPivot('status', 'id');
+        return $this->belongsToMany('App\Attendance', 'student_attendance', 'student_id', 'attendance_id')->withPivot('status');
     }
 }

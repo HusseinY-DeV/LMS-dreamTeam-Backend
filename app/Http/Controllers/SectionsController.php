@@ -7,15 +7,22 @@ use App\Http\Requests\AddSection;
 use App\Http\Requests\UpdateSection;
 use App\Section;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SectionsController extends Controller
 {
     public function many(Request $request)
     {
         if ($request->query('_ALL') == 1) {
-            return Section::all();
+            return Section::with(['class', 'class'])->get();
         }
-        $sections = Section::paginate(10);
+        if ($request->query('sectionname')) {
+            $sections = Section::with(['class', 'class'])
+                ->where('sections.name', 'LIKE', '%' . $request->query('sectionname') . '%')
+                ->get();
+            return response($sections);
+        }
+        $sections = Section::with(['class', 'class'])->paginate(10);
         return $sections;
     }
 
@@ -100,9 +107,21 @@ class SectionsController extends Controller
         if (!$section) {
             $response['message'] = 'Section does not exist';
             return $response;
+        } else {
+            // Check if the given section contains students
+            $students = DB::table('students')
+                ->select('students.id')
+                ->where('section_id', $id)
+                ->get();
+            $studentsArr = json_decode(json_encode($students), true);
+            if (!$studentsArr) {
+                $section->delete();
+                $response['message'] = 'Section deleted successfully';
+                return $response;
+            } else {
+                $response['message'] = 'Can not delete section that contains students';
+                return $response;
+            }
         }
-        $section->delete();
-        $response['message'] = 'Section deleted successfully';
-        return $response;
     }
 }

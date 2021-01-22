@@ -5,13 +5,25 @@ namespace App\Http\Controllers;
 use App\Classe;
 use App\Http\Requests\AddClass;
 use App\Http\Requests\UpdateClass;
-use App\Http\Requests\UpdateStudent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClassesController extends Controller
 {
-    public function many()
+
+    public function many(Request $request)
     {
+        if ($request->query('_ALL') == 1) {
+            $classes = Classe::all();
+            return $classes;
+        }
+        if ($request->query('classname')) {
+            $classes = DB::Table('classes')
+                ->select('*')
+                ->where('classes.name', 'LIKE', '%' . $request->query('classname') . '%')
+                ->get();
+            return response($classes);
+        }
         $classes = Classe::paginate(10);
         return $classes;
     }
@@ -47,15 +59,12 @@ class ClassesController extends Controller
 
     public function update(UpdateClass $request, $id)
     {
-        $request->validated();
-
         // Check if class exists
         $class = Classe::find($id);
         if (!$class) {
             $response['message'] = 'Class does not exist';
             return $response;
         }
-
         $class->name = $request->name;
         $class->save();
         $response['message'] = 'Class updated successfully';
@@ -69,9 +78,22 @@ class ClassesController extends Controller
         if (!$class) {
             $response['message'] = 'Class does not exist';
             return $response;
+        } else {
+            // Check if the given section contains students
+            $sections = DB::table('sections')
+                ->select('sections.id')
+                ->where('sections.class_id', $id)
+                ->get();
+            $sectionsArr = json_decode(json_encode($sections), true);
+            if (!$sectionsArr) {
+                $class->delete();
+                $response['message'] = 'Class deleted successfully';
+                return $response;
+            } else {
+                $response['message'] = 'Can not delete a class that contains section(s)';
+                return $response;
+            }
         }
-        $class->delete();
-        $response['message'] = 'Class deleted successfully';
-        return $response;
+
     }
 }

@@ -160,6 +160,12 @@ Route::prefix('sections')->group(function () {
     Route::get('{id}', 'SectionsController@one');
 
     /** 
+     * /api/sections/id/students
+     * Get all students that belongs to the section with the specified id
+     * */
+    Route::get('{id}/students', 'SectionsController@students');
+
+    /** 
      * /api/sections/
      * Add a section
      * Values in the body

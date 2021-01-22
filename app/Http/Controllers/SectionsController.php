@@ -29,6 +29,16 @@ class SectionsController extends Controller
         return $section;
     }
 
+    public function students($id)
+    {
+        $section = Section::find($id);
+        if (!$section) {
+            $response['message'] = 'Section does not exist';
+            return $response;
+        }
+        return $section->students;
+    }
+
     public function add(AddSection $request)
     {
         // Validate the incoming data
